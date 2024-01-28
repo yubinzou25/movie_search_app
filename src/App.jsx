@@ -11,7 +11,12 @@ function App() {
   const searchMovie = async (title) => {
     const response = await fetch(`${API_URL}&s=${title}`);
     const data = await response.json();
-    setMovies(data.Search);
+    if(data.Response === 'True'){
+      setMovies(data.Search);
+    }else{
+      setMovies([]);
+      setSearchTerm('');
+    }
   }
 
   return (
@@ -22,6 +27,7 @@ function App() {
           placeholder="Search for movies"
           value={searchTerm}
           onChange={(e)=> setSearchTerm(e.target.value)}
+          onKeyDown={(e)=> e.key === 'Enter' && searchMovie(searchTerm)}
         />
         <img
           src={SearchIcon}
