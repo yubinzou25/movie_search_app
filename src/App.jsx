@@ -11,12 +11,19 @@ function App() {
   const searchMovie = async (title) => {
     const response = await fetch(`${API_URL}&s=${title}`);
     const data = await response.json();
+    console.log(data);
     if(data.Response === 'True'){
       setMovies(data.Search);
-    }else{
-      setMovies([]);
-      setSearchTerm('');
     }
+    else{
+      if(data.Error === 'Movie not found!'){
+        setMovies([]);
+      }
+    }
+  }
+  const handleInputChange = (event) => {
+    setSearchTerm(event.target.value);
+    searchMovie(event.target.value);
   }
 
   return (
@@ -26,8 +33,7 @@ function App() {
         <input
           placeholder="Search for movies"
           value={searchTerm}
-          onChange={(e)=> setSearchTerm(e.target.value)}
-          onKeyDown={(e)=> e.key === 'Enter' && searchMovie(searchTerm)}
+          onChange={handleInputChange}
         />
         <img
           src={SearchIcon}
@@ -38,7 +44,7 @@ function App() {
         {movies.length > 0 ?(
           <div className="Container">
           {movies.map((movie) => (
-            <MovieCard key={movie.name} movie={movie}/>
+            <MovieCard key={movie.imdbID} movie={movie}/>
           ))}
           </div>
         ):(
